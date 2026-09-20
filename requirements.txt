@@ -1,0 +1,6 @@
+pydantic>=2.13,<3
+SQLAlchemy>=2.0,<3
+fastapi>=0.141,<1
+uvicorn>=0.52,<1
+streamlit>=1.50,<2
+pandas>=2.2,<3
