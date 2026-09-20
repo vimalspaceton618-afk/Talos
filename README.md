@@ -82,6 +82,27 @@ python3 -m agentguard.agent_guard_middleware
 python3 -m agentguard.quarantine_manager
 ```
 
+## Windows PowerShell
+
+Do not run `chmod` in PowerShell; it is a Linux/macOS command. Do not launch the `.sh` files directly from Windows unless you are using WSL or Git Bash. Use the native PowerShell scripts:
+
+```powershell
+git clone https://github.com/vimalspaceton618-afk/Talos.git
+cd Talos
+Copy-Item .env.example .env
+npm install -g pnpm
+.\setup.ps1
+.\start.ps1
+```
+
+If PowerShell blocks local scripts, allow them for your user account once:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+The services open at `http://localhost:3000` (React), `http://localhost:8501` (Streamlit), and `http://localhost:8000/docs` (FastAPI). If you use WSL or Git Bash, the original `./setup.sh` and `./start.sh` commands remain supported.
+
 ## React dashboard
 
 ```bash
