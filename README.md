@@ -66,6 +66,12 @@ Print benchmark analytics:
 python3 -m agentguard.test_red_team --benchmark
 ```
 
+## GitHub Actions security regression testing
+
+The workflow at `.github/workflows/security-regression.yml` runs automatically on pushes and pull requests targeting `main`, and can also be started manually from the **Actions** tab. It installs the pinned Python dependency set, compiles the package, runs the red-team suite, runs every standalone security-module test, and uploads the benchmark JSON as a 30-day workflow artifact.
+
+To require the security suite before merging, open **Settings → Branches → Branch protection rules**, protect `main`, and require the check named **AgentGuard Security Regression / Red-team suite and benchmark**. No repository secrets are required because the suite uses deterministic local fixtures.
+
 Run all standalone security-module tests:
 
 ```bash
