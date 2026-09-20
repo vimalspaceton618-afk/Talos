@@ -2,18 +2,38 @@
 
 AgentGuard is a local-first security firewall proxy for AI agents. It combines inbound indirect-prompt-injection detection, outbound DLP, risk-based policy enforcement, a mock agent environment, a FastAPI HITL API, a Streamlit security dashboard, and red-team regression benchmarks.
 
+## Plug-and-play quick start
+
+Requirements: Python 3.11+, Node.js 20+, and `pnpm`.
+
+```bash
+git clone https://github.com/vimalspaceton618-afk/Talos.git
+cd Talos
+cp .env.example .env
+chmod +x setup.sh start.sh
+./setup.sh
+./start.sh
+```
+
+This launches the FastAPI API at `http://localhost:8000`, the Streamlit operations dashboard at `http://localhost:8501`, and the React command center at `http://localhost:3000`. Press `Ctrl+C` once to stop all three processes.
+
+For a backend-only install, use `pip install -e .` after creating a virtual environment. The default SQLite database is created automatically on startup.
+
 ## Repository layout
 
 - `agentguard/` — Python security engine, database layer, FastAPI HITL API, Streamlit dashboard, mock tools, and tests.
 - `dashboard/` — React command-center frontend for live telemetry and quarantine review.
 - `requirements.txt` — Python runtime dependencies.
+- `setup.sh` — one-command environment and dependency setup.
+- `start.sh` — one-command API, Streamlit, and React launcher.
+- `.env.example` — safe local configuration defaults.
 
 ## Python setup
 
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
-pip install -r requirements.txt
+pip install -e .
 ```
 
 Initialize SQLite tables:
@@ -22,13 +42,13 @@ Initialize SQLite tables:
 python3 -c "from agentguard.database import init_db; init_db()"
 ```
 
-Run the FastAPI HITL API:
+Run the FastAPI HITL API manually:
 
 ```bash
 uvicorn agentguard.hitl_api:app --reload --port 8000
 ```
 
-Run the Streamlit operations dashboard:
+Run the Streamlit operations dashboard manually:
 
 ```bash
 streamlit run agentguard/app.py

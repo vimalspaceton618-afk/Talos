@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+import os
 from typing import Annotated, Iterator
 from uuid import UUID
 
 from fastapi import Depends, FastAPI, HTTPException, Query, status
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -80,6 +82,13 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[origin.strip() for origin in os.getenv("AGENTGUARD_CORS_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",") if origin.strip()],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
+)
 
 
 def _utc(value: datetime) -> datetime:
@@ -118,6 +127,16 @@ def _get_queue_item(session: Session, event_id: UUID) -> tuple[QuarantineItem, A
 def health() -> dict[str, str]:
     """Return a lightweight liveness response."""
     return {"status": "ok"}
+
+
+@app.get("/logs", response_model=list[SecurityEvent], tags=["audit"])
+def list_logs(
+    limit: Annotated[int, Query(ge=1, le=500)] = 100,
+    offset: Annotated[int, Query(ge=0)] = 0,
+) -> list[SecurityEvent]:
+    """Return recent audit events for dashboard telemetry."""
+    database.init_db()
+    return database.fetch_logs(limit=limit, offset=offset)
 
 
 @app.post(
